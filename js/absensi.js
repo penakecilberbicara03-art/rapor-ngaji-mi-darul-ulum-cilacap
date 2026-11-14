@@ -167,7 +167,7 @@
               showToast('Format file backup JSON tidak valid.', true);
               return;
             }
-            D.saveStore({
+            D.restoreBackupStore({
               classes: parsed.classes || [],
               students: parsed.students,
               sessions: parsed.sessions,
@@ -2574,7 +2574,7 @@
               showToast('Format file backup JSON tidak valid.', true);
               return;
             }
-            D.saveStore({
+            D.restoreBackupStore({
               classes: parsed.classes || [],
               students: parsed.students,
               sessions: parsed.sessions,
@@ -2849,6 +2849,9 @@
     };
 
     checkAuthAndRender();
+    D.syncFromSupabase(function () {
+      checkAuthAndRender();
+    });
   }
 
   document.addEventListener('DOMContentLoaded', init);

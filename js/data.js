@@ -211,10 +211,60 @@
     }
   }
 
+  function getSb() {
+    return global.RoodohSupabase && global.RoodohSupabase.isConfigured()
+      ? global.RoodohSupabase
+      : null;
+  }
+
+  function syncFromSupabase(onSynced) {
+    var sb = getSb();
+    if (!sb) return Promise.resolve(false);
+    return sb
+      .fetchAllStore()
+      .then(function (remote) {
+        if (!remote) return false;
+        var nextStore = {
+          classes: Array.isArray(remote.classes) ? remote.classes : [],
+          students: Array.isArray(remote.students) ? remote.students : [],
+          sessions: Array.isArray(remote.sessions) ? remote.sessions : [],
+          users: Array.isArray(remote.users) ? remote.users : [],
+          settings: remote.settings
+            ? Object.assign({}, DEFAULT_SETTINGS, remote.settings)
+            : clone(DEFAULT_SETTINGS),
+        };
+        saveStore(nextStore);
+        if (typeof onSynced === 'function') onSynced(nextStore);
+        return true;
+      })
+      .catch(function (err) {
+        console.error('Gagal sinkronisasi dari Supabase:', err);
+        return false;
+      });
+  }
+
+  function restoreBackupStore(nextStore) {
+    var normalized = {
+      classes: Array.isArray(nextStore.classes) ? nextStore.classes : [],
+      students: Array.isArray(nextStore.students) ? nextStore.students : [],
+      sessions: Array.isArray(nextStore.sessions) ? nextStore.sessions : [],
+      users: Array.isArray(nextStore.users) ? nextStore.users : [],
+      settings: nextStore.settings
+        ? Object.assign({}, DEFAULT_SETTINGS, nextStore.settings)
+        : clone(DEFAULT_SETTINGS),
+    };
+    saveStore(normalized);
+    var sb = getSb();
+    if (sb) sb.replaceAllFromBackup(normalized);
+    return normalized;
+  }
+
   function clearAllData() {
     var empty = getEmptyStore();
     saveStore(empty);
     setCurrentUser(null);
+    var sb = getSb();
+    if (sb) sb.clearAllRemote();
     return empty;
   }
 
@@ -268,6 +318,12 @@
       store.settings.namaMadrasah = String(namaMadrasah).trim();
     }
     saveStore(store);
+
+    var sb = getSb();
+    if (sb) {
+      sb.upsertUser(adminAccount);
+      sb.upsertSettings(store.settings);
+    }
 
     var sessionUser = clone(adminAccount);
     delete sessionUser.password;
@@ -334,6 +390,8 @@
     };
     store.users.push(newUser);
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.upsertUser(newUser);
     return newUser;
   }
 
@@ -343,6 +401,8 @@
       return u.id !== userId;
     });
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.deleteUser(userId);
     return store;
   }
 
@@ -363,6 +423,8 @@
       return a.nama.localeCompare(b.nama);
     });
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.upsertClass(newClass);
     return newClass;
   }
 
@@ -374,9 +436,11 @@
     var oldName = oldClass ? oldClass.nama : null;
     var nextName = updates.nama ? String(updates.nama).trim().toUpperCase() : oldName;
 
+    var updatedCls = null;
     store.classes = store.classes.map(function (c) {
       if (c.id !== id) return c;
-      return Object.assign({}, c, updates, { nama: nextName });
+      updatedCls = Object.assign({}, c, updates, { nama: nextName });
+      return updatedCls;
     });
 
     if (oldName && nextName && oldName !== nextName) {
@@ -390,6 +454,14 @@
       return a.nama.localeCompare(b.nama);
     });
     saveStore(store);
+
+    var sb = getSb();
+    if (sb && updatedCls) {
+      sb.upsertClass(updatedCls);
+      if (oldName && nextName && oldName !== nextName) {
+        sb.renameStudentClass(oldName, nextName);
+      }
+    }
     return store;
   }
 
@@ -399,6 +471,8 @@
       return c.id !== id;
     });
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.deleteClass(id);
     return store;
   }
 
@@ -420,15 +494,22 @@
     };
     store.students.push(newStudent);
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.upsertStudent(newStudent);
     return newStudent;
   }
 
   function updateStudent(id, updates) {
     var store = loadStore();
+    var updatedStu = null;
     store.students = store.students.map(function (s) {
-      return s.id === id ? Object.assign({}, s, updates) : s;
+      if (s.id !== id) return s;
+      updatedStu = Object.assign({}, s, updates);
+      return updatedStu;
     });
     saveStore(store);
+    var sb = getSb();
+    if (sb && updatedStu) sb.upsertStudent(updatedStu);
     return store;
   }
 
@@ -441,6 +522,8 @@
       return ses.studentId !== id;
     });
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.deleteStudent(id);
     return store;
   }
 
@@ -454,15 +537,22 @@
     });
     store.sessions.unshift(newSession);
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.upsertSession(newSession);
     return newSession;
   }
 
   function updateSession(id, sessionPayload) {
     var store = loadStore();
+    var updatedSes = null;
     store.sessions = store.sessions.map(function (s) {
-      return s.id === id ? Object.assign({}, s, sessionPayload) : s;
+      if (s.id !== id) return s;
+      updatedSes = Object.assign({}, s, sessionPayload);
+      return updatedSes;
     });
     saveStore(store);
+    var sb = getSb();
+    if (sb && updatedSes) sb.upsertSession(updatedSes);
     return store;
   }
 
@@ -472,6 +562,8 @@
       return s.id !== id;
     });
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.deleteSession(id);
     return store;
   }
 
@@ -481,18 +573,24 @@
     var store = loadStore();
     store.settings = Object.assign({}, store.settings, newSettings);
     saveStore(store);
+    var sb = getSb();
+    if (sb) sb.upsertSettings(store.settings);
     return store;
   }
 
   function updateStudentSemesterNote(studentId, semesterKey, noteText) {
     var store = loadStore();
+    var updatedStu = null;
     store.students = store.students.map(function (s) {
       if (s.id !== studentId) return s;
       var notes = Object.assign({}, s.catatanSemester || {});
       notes[semesterKey] = noteText;
-      return Object.assign({}, s, { catatanSemester: notes });
+      updatedStu = Object.assign({}, s, { catatanSemester: notes });
+      return updatedStu;
     });
     saveStore(store);
+    var sb = getSb();
+    if (sb && updatedStu) sb.upsertStudent(updatedStu);
     return store;
   }
 
@@ -736,6 +834,8 @@
     ALL_QURAN_SURAHS: ALL_QURAN_SURAHS,
     loadStore: loadStore,
     saveStore: saveStore,
+    syncFromSupabase: syncFromSupabase,
+    restoreBackupStore: restoreBackupStore,
     clearAllData: clearAllData,
     getCurrentUser: getCurrentUser,
     setCurrentUser: setCurrentUser,
