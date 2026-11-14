@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RAPOR NGAJI MADRASAH IBTIDAIYAH DARUL ULUM CILACAP</title>
+    <meta
+      name="description"
+      content="RAPOR NGAJI MADRASAH IBTIDAIYAH DARUL ULUM CILACAP — Pencatatan setoran ngaji harian Senin & Kamis ba'da Dzuhur (Iqro, Al-Qur'an, Tahfidz Juz 30 & 5 Surat Pilihan) serta cetak rapor semester."
+    />
+    <meta property="og:title" content="RAPOR NGAJI MADRASAH IBTIDAIYAH DARUL ULUM CILACAP" />
+    <meta
+      property="og:description"
+      content="RAPOR NGAJI MADRASAH IBTIDAIYAH DARUL ULUM CILACAP dengan akses Admin, Guru, Wali Murid dan cetak rapor A4 siap PDF."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="min-h-screen bg-[#F6F8F7] text-[#112A22] antialiased selection:bg-emerald-100 selection:text-emerald-900">
+    <!-- Halaman Login (Admin, Guru, Wali Murid) -->
+    <section id="view-login" class="no-print"></section>
+
+    <!-- Top Navigation Bar (Single-Row 3-Zone, disembunyikan saat cetak atau belum login) -->
+    <header id="app-header" class="no-print sticky top-0 z-40 hidden border-b border-[#DCE5E1] bg-white">
+      <div class="mx-auto flex h-14 max-w-[1360px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <!-- Zone 1: Brand Wordmark -->
+        <button
+          id="brand-home-btn"
+          type="button"
+          class="flex min-w-0 items-center gap-2 text-left"
+        >
+          <svg
+            class="h-5 w-5 shrink-0 text-[#0D7A5F]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+          </svg>
+          <span class="truncate text-xs font-bold tracking-tight text-[#112A22] sm:text-sm">RAPOR NGAJI MADRASAH IBTIDAIYAH DARUL ULUM CILACAP</span>
+        </button>
+
+        <!-- Zone 2: Desktop Navigation Links -->
+        <nav class="hidden shrink-0 items-center gap-4 lg:gap-6 md:flex">
+          <button type="button" data-nav-tab="dashboard">Rekapitulasi</button>
+          <button type="button" data-nav-tab="journal">Jurnal Ngaji</button>
+          <button type="button" data-nav-tab="students">Kelas &amp; Siswa</button>
+          <button type="button" data-nav-tab="report">Rapor Semester</button>
+        </nav>
+
+        <!-- Zone 3: User Info + Primary Action + Logout -->
+        <div class="flex items-center gap-3 shrink-0">
+          <span
+            id="header-user-info"
+            class="hidden max-w-[200px] truncate text-xs font-medium text-[#4D645C] lg:inline-block"
+          ></span>
+          <button
+            id="top-cta-journal"
+            type="button"
+            class="hidden min-h-[38px] items-center gap-1.5 rounded-lg bg-[#0D7A5F] px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#09624C] sm:inline-flex whitespace-nowrap shrink-0"
+          >
+            Catat Setoran
+          </button>
+          <button
+            id="btn-logout"
+            type="button"
+            class="min-h-[38px] rounded-lg border border-[#D4DFDA] bg-white px-3 py-1.5 text-xs font-semibold text-[#2A423A] transition-colors hover:bg-[#F3F7F5] whitespace-nowrap shrink-0"
+          >
+            Keluar
+          </button>
+          <button
+            id="mobile-menu-toggle"
+            type="button"
+            class="flex h-10 w-10 items-center justify-center rounded-lg border border-[#DCE5E1] text-[#2A423A] hover:bg-[#F3F7F5] md:hidden"
+            aria-label="Buka menu navigasi"
+          >
+            <svg
+              class="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Drawer Menu -->
+      <nav id="mobile-nav-menu" class="hidden border-t border-[#E7EEEB] bg-white px-4 py-3 md:hidden">
+        <div class="flex flex-col gap-1">
+          <button type="button" data-nav-tab="dashboard" data-nav-mobile="true">Rekapitulasi</button>
+          <button type="button" data-nav-tab="journal" data-nav-mobile="true">Jurnal Ngaji</button>
+          <button type="button" data-nav-tab="students" data-nav-mobile="true">Kelas &amp; Siswa</button>
+          <button type="button" data-nav-tab="report" data-nav-mobile="true">Rapor Semester</button>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Viewport -->
+    <main
+      id="app-main"
+      class="mx-auto hidden max-w-[1360px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8 print:block print:max-w-none print:p-0"
+    >
+      <section id="view-dashboard" class="view-panel"></section>
+      <section id="view-journal" class="view-panel hidden"></section>
+      <section id="view-students" class="view-panel hidden"></section>
+      <section id="view-report" class="view-panel hidden"></section>
+    </main>
+
+    <!-- Modal Tambah / Edit Data Siswa (CRUD) -->
+    <div
+      id="student-modal"
+      class="no-print fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-[2px]"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-xl border border-[#DCE5E1] bg-white p-6 shadow-xl">
+        <div class="flex items-center justify-between border-b border-[#EDF2F0] pb-4">
+          <h3 id="stu-modal-title" class="text-lg font-semibold text-[#112A22]">Tambah Siswa MI Baru</h3>
+          <button
+            id="stu-modal-close"
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100"
+            aria-label="Tutup form"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form id="student-modal-form" class="mt-5 space-y-4">
+          <p
+            id="stu-modal-error"
+            class="hidden rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700"
+          ></p>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#3C554C]">Nama Lengkap Santri / Siswa</label>
+            <input
+              id="stu-input-nama"
+              type="text"
+              required
+              placeholder="Contoh: Ahmad Fauzan Al-Farisi"
+              class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 text-sm text-[#112A22]"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-semibold text-[#3C554C]">NISN</label>
+              <input
+                id="stu-input-nisn"
+                type="text"
+                required
+                placeholder="0147293018"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 font-mono text-sm text-[#112A22]"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Kelas</label>
+              <select
+                id="stu-input-kelas"
+                required
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] bg-white px-3 font-mono text-sm text-[#112A22]"
+              ></select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Jenis Kelamin</label>
+              <select
+                id="stu-input-jk"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] bg-white px-3 text-sm text-[#112A22]"
+              >
+                <option value="L">Laki-laki (Putra)</option>
+                <option value="P">Perempuan (Putri)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Nama Orang Tua / Wali</label>
+              <input
+                id="stu-input-wali"
+                type="text"
+                placeholder="Nama Wali Murid"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 text-sm text-[#112A22]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#3C554C]">Nama Guru Pembimbing Ngaji</label>
+            <input
+              id="stu-input-guru"
+              type="text"
+              required
+              placeholder="Ustadz/Ustadzah Pembimbing"
+              class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 text-sm text-[#112A22]"
+            />
+          </div>
+
+          <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-[#DCE5E1] bg-[#FAFDFC] p-3.5">
+            <input
+              id="stu-input-juz30"
+              type="checkbox"
+              class="mt-0.5 h-4 w-4 rounded border-slate-300 text-[#0D7A5F]"
+            />
+            <span class="text-xs leading-relaxed text-[#3C554C]">
+              <strong class="block font-semibold text-[#112A22]">
+                Juz 30 sudah tuntas sebelum semester ini
+              </strong>
+              Aktifkan jika siswa sudah menuntaskan seluruh Juz 30 dan langsung melanjutkan setoran ke 5 Surat Pilihan Utama (Al-Mulk s.d. Al-Kahfi).
+            </span>
+          </label>
+
+          <div class="flex items-center justify-end gap-3 border-t border-[#EDF2F0] pt-4">
+            <button
+              id="stu-modal-cancel"
+              type="button"
+              class="min-h-[40px] rounded-lg border border-[#D4DFDA] bg-white px-4 py-2 text-sm font-medium text-[#2A423A] hover:bg-[#F3F7F5]"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              class="min-h-[40px] rounded-lg bg-[#0D7A5F] px-5 py-2 text-sm font-semibold text-white hover:bg-[#09624C]"
+            >
+              Simpan Siswa
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Tambah / Edit Kelas (CRUD Kelas) -->
+    <div
+      id="class-modal"
+      class="no-print fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-[2px]"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="w-full max-w-md rounded-xl border border-[#DCE5E1] bg-white p-6 shadow-xl">
+        <div class="flex items-center justify-between border-b border-[#EDF2F0] pb-4">
+          <h3 id="cls-modal-title" class="text-lg font-semibold text-[#112A22]">Tambah Kelas Baru</h3>
+          <button
+            id="cls-modal-close"
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100"
+            aria-label="Tutup modal kelas"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form id="class-modal-form" class="mt-5 space-y-4">
+          <p
+            id="cls-modal-error"
+            class="hidden rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700"
+          ></p>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Nama Kelas</label>
+              <input
+                id="cls-input-nama"
+                type="text"
+                required
+                placeholder="Contoh: 1B atau 6B"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 font-mono text-sm uppercase text-[#112A22]"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Tingkat (Kelas 1–6)</label>
+              <select
+                id="cls-input-tingkat"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] bg-white px-3 text-sm text-[#112A22]"
+              >
+                <option value="1">Kelas 1</option>
+                <option value="2">Kelas 2</option>
+                <option value="3">Kelas 3</option>
+                <option value="4">Kelas 4</option>
+                <option value="5">Kelas 5</option>
+                <option value="6">Kelas 6</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#3C554C]">Guru Pembimbing Roodoh</label>
+            <input
+              id="cls-input-guru"
+              type="text"
+              required
+              placeholder="Contoh: Ustadzah Siti Aminah, S.Pd.I"
+              class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 text-sm text-[#112A22]"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-[#3C554C]">Wali Kelas</label>
+            <input
+              id="cls-input-wali"
+              type="text"
+              placeholder="Nama Wali Kelas"
+              class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 text-sm text-[#112A22]"
+            />
+          </div>
+
+          <div class="flex items-center justify-end gap-3 border-t border-[#EDF2F0] pt-4">
+            <button
+              id="cls-modal-cancel"
+              type="button"
+              class="min-h-[40px] rounded-lg border border-[#D4DFDA] bg-white px-4 py-2 text-sm font-medium text-[#2A423A] hover:bg-[#F3F7F5]"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              class="min-h-[40px] rounded-lg bg-[#0D7A5F] px-5 py-2 text-sm font-semibold text-white hover:bg-[#09624C]"
+            >
+              Simpan Kelas
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Tambah Akun Guru / Admin -->
+    <div
+      id="user-modal"
+      class="no-print fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-[2px]"
+      role="dialog"
+      aria-modal="true"
+    >
+      <div class="w-full max-w-md rounded-xl border border-[#DCE5E1] bg-white p-6 shadow-xl">
+        <div class="flex items-center justify-between border-b border-[#EDF2F0] pb-4">
+          <h3 class="text-lg font-semibold text-[#112A22]">Tambah Akun Pengguna</h3>
+          <button
+            id="usr-modal-close"
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form id="user-modal-form" class="mt-5 space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-[#3C554C]">Nama Lengkap</label>
+            <input
+              id="usr-input-nama"
+              type="text"
+              required
+              placeholder="Contoh: Ustadz Ahmad Zaki, S.Pd.I"
+              class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 text-sm"
+            />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Username</label>
+              <input
+                id="usr-input-username"
+                type="text"
+                required
+                placeholder="zaki"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 font-mono text-sm"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Kata Sandi</label>
+              <input
+                id="usr-input-password"
+                type="text"
+                required
+                value="guru123"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 font-mono text-sm"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Peran Akses</label>
+              <select
+                id="usr-input-role"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] bg-white px-3 text-sm"
+              >
+                <option value="guru">Guru Pembimbing</option>
+                <option value="admin">Admin Madrasah</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-[#3C554C]">Jabatan</label>
+              <input
+                id="usr-input-jabatan"
+                type="text"
+                value="Guru Pembimbing Roodoh"
+                class="mt-1.5 min-h-[42px] w-full rounded-lg border border-[#D4DFDA] px-3 text-sm"
+              />
+            </div>
+          </div>
+          <div class="flex items-center justify-end gap-3 border-t border-[#EDF2F0] pt-4">
+            <button
+              id="usr-modal-cancel"
+              type="button"
+              class="min-h-[40px] rounded-lg border border-[#D4DFDA] bg-white px-4 py-2 text-sm font-medium text-[#2A423A]"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              class="min-h-[40px] rounded-lg bg-[#0D7A5F] px-5 py-2 text-sm font-semibold text-white"
+            >
+              Buat Akun
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal Konfirmasi Hapus / Reset -->
+    <div
+      id="confirm-modal"
+      class="no-print fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-950/40 p-4 backdrop-blur-[2px]"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-modal-title"
+    >
+      <div class="w-full max-w-md rounded-xl border border-[#DCE5E1] bg-white p-6 shadow-xl">
+        <div class="flex items-start justify-between gap-4">
+          <h3 id="confirm-modal-title" class="text-lg font-semibold text-[#112A22]">Konfirmasi</h3>
+          <button
+            id="confirm-modal-close"
+            type="button"
+            class="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100"
+            aria-label="Tutup dialog"
+          >
+            ✕
+          </button>
+        </div>
+        <p id="confirm-modal-desc" class="mt-2 text-sm leading-relaxed text-[#475E57]"></p>
+        <div class="mt-6 flex items-center justify-end gap-3">
+          <button
+            id="confirm-modal-cancel"
+            type="button"
+            class="min-h-[40px] rounded-lg border border-[#D4DFDA] bg-white px-4 py-2 text-sm font-medium text-[#2A423A] hover:bg-[#F3F7F5]"
+          >
+            Batal
+          </button>
+          <button
+            id="confirm-modal-btn"
+            type="button"
+            class="min-h-[40px] rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700"
+          >
+            Ya, Hapus
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-banner" class="hidden" role="status"></div>
+
+    <!-- Script Modular Terhubung Rapi -->
+    <script src="js/data.js"></script>
+    <script src="js/absensi.js"></script>
+    <script src="js/rapor.js"></script>
+  </body>
+</html>

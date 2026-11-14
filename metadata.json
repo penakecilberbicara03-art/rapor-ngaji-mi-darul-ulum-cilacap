@@ -1,0 +1,6 @@
+{
+  "name": "Rapor Roodoh MI",
+  "description": "Sistem Rapor Roodoh/Ngaji Harian (Senin & Kamis Ba'da Dzuhur) dan Rekap Semester Madrasah Ibtidaiyah dengan penyimpanan LocalStorage dan ekspor PDF.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
